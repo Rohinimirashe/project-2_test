@@ -20,16 +20,13 @@ const createCollege= async function (req, res) {
       });
     }
 
-
-  
-    
+   
 //*Extracts data from body
 
     const name = req.body.name;
     const fullName = req.body.fullName;
     const logoLink = req.body.logoLink;
-    // const isDeleted = req.body.isDeleted;
-    
+    // const isDeleted = req.body.isDeleted;   
 
 //*Body Validation
 
@@ -49,80 +46,31 @@ const createCollege= async function (req, res) {
     res.status(500).send({ msg: "server error", error: err.message });
     }
     }
-
-
-
-
-
-
-
-
-
-
-
-
 //=================*Get College Details===============
 
 const GetCollegeDetails = async function (req, res) {
-  try {
+  try{
+    const info = req.query.collegeName
+    let getAllCollegeDetails = await internModel.find()
+    if(!info){
+      return res.status(200).send({status: false, massage: getAllCollegeDetails})
+    }   
 
+    if(Object.keys(info).length === 0) return res.status(400).send({status:false , message:"Please Enter College Name"})
+    const college = await collegeModel.findOne({name: info ,isDeleted:false})
+    if(!college) return res.status(400).send({status:false , message:"Did not found college with this name please register first"})
+      const { name, fullName, logoLink } = college
+      const data = { name, fullName, logoLink };
+      data["interests"] = [];
+      const collegeIdFromcollege = college._id;
 
-    let collegeName = req.query.collegeName;
-
-    const college = await collegeModel.findOne({name:collegeName })
-if(college.isDeleted== true){
-  res.status().send({msg:"deleted college details"})
+      const internList = await internModel.find({ collegeId: collegeIdFromcollege  ,isDeleted:false});
+      if (!internList) return res.status(404).send({ status: false, message: " We Did not Have Any Intern With This College" });
+      data["interests"] = [...internList]
+      res.status(200).send({ status: true, data: data });
 }
 
-    const collegeCopy = await collegeModel.findOne({name:collegeName }).select({name:1,fullName:1,logoLink:1,interests:1,_id:0})
-
-// console.log(college)
-
-
-
-// {
-//   "name" : "iith",
-//   "fullName" : "Indian Institute of Technology, Hyderabad",
-//   "logoLink" : "https://functionup.s3.ap-south-1.amazonaws.com/colleges/iith.png",
-//   "isDeleted" : false
-// }
-
-    let allData = await internModel
-      .find({
-        isDeleted: false,collegeId: college._id
-      }).select({name:1,email:1,mobile:1})
-      
-      // console.log(collegeCopy)
-     
-    //  res.body.msg.interests= allData
-    //  console.log(res)
-    //  (doubt 1)
-    //method 2 (but why iam not able to create a new key in object , it worked only when schmea had that key)
-    
-    collegeCopy["interests"]= allData
-
-    // const {name,fullName,logoLink,isDeleted} = college
-    // const result= {name,fullName,logoLink,isDeleted,interests:allData} 
-    
-    // for (let i=0 ; i<allData.length;i++) {
-    
-    //   collegeCopy.interests.push(allData[i])
-      
-    // }
-   
-
-    // const newCollegeData = await collegeModel.findOne({name:collegeName})
-    //  console.log(newCollegeData)
-//**Why iam not able to update an db entry only the response is changed */
-    //*Validation
-
-  
-
-    res.status(200).send({ status: true, msg: collegeCopy});
-   
-
-
-  } catch (err) {
+   catch (err) {
     res
       .status(500)
       .send({ status: false, msg: "server Error", err: err.message });

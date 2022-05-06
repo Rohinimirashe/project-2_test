@@ -40,6 +40,14 @@ if (alreadyAccount) return res.status(400).send({msg:"account with this emailId 
 let alreadyAccountMobile = await internModel.findOne({mobile:mobile})
 if (alreadyAccountMobile) return res.status(400).send({msg:"account with this mobile no. already exist"})
 
+if (!email)
+return res.status(400).send({ status: false, msg: "email is required" });
+if (!mobile)
+return res
+  .status(400)
+  .send({ status: false, msg: "mobile is required" });
+
+
     let collegeId = req.body.collegeId;
     if (!collegeId)
       return res
@@ -57,27 +65,18 @@ if (alreadyAccountMobile) return res.status(400).send({msg:"account with this mo
 
    
 
-    //*Params Validation
-    // if (!name)
-    //   return res.status(400).send({ status: false, msg: "name is required" });
-    if (!email)
-      return res.status(400).send({ status: false, msg: "email is required" });
-    if (!mobile)
-      return res
-        .status(400)
-        .send({ status: false, msg: "mobile is required" });
+    
+    // if (!email)
+    //   return res.status(400).send({ status: false, msg: "email is required" });
+    // if (!mobile)
+    //   return res
+    //     .status(400)
+    //     .send({ status: false, msg: "mobile is required" });
 
     let internCreated = await internModel.create(data);
 
  
-    // if (body.isDeleted === true) {
-    //   let CreateDeleteTime = await blogModel.findOneAndUpdate(
-    //     { authorId: data.authorId },
-    //     { $set: { deletedAt: new Date() } },
-    //     { new: true }
-    //   );
-    // }
-    // let Finaldata = await blogModel.find(data);
+    
 
     res.status(201).send({ status: true, data: internCreated });
   } catch (err) {
