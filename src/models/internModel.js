@@ -4,21 +4,6 @@ const ObjectId = mongoose.Schema.Types.ObjectId
 
 //*--------Intern MODEL----------------
 
-//**MOBILE NUMBER VALIDATION */
-// function phonenumber(inputtxt)
-// {
-//   var phoneno = /^\d{10}$/;
-//   if((inputtxt.value.match(phoneno))
-//         {
-//       return true;
-//         }
-//       else
-//         {
-//         alert("message");
-//         return false;
-//         }
-// }
-
 const internSchema = new mongoose.Schema(
     {
         name: {

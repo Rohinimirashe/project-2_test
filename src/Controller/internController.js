@@ -16,7 +16,7 @@ const createInten = async function (req, res) {
         .status(400)
         .send({
           status: false,
-          msg: "Invalid request, Please provide blog details",
+          msg: "Invalid request, Please provide intern details",
         });
     }
 
@@ -40,38 +40,14 @@ if (alreadyAccount) return res.status(400).send({msg:"account with this emailId 
 let alreadyAccountMobile = await internModel.findOne({mobile:mobile})
 if (alreadyAccountMobile) return res.status(400).send({msg:"account with this mobile no. already exist"})
 
-if (!email)
-return res.status(400).send({ status: false, msg: "email is required" });
-if (!mobile)
-return res
-  .status(400)
-  .send({ status: false, msg: "mobile is required" });
-
-
-    let collegeId = req.body.collegeId;
-    if (!collegeId)
-      return res
-        .status(400)
-        .send({ status: false, msg: "college ID is Required" });
-    let validationCollegeId = await collegeModel.findById(collegeId);
-    if (!validationCollegeId)
-      return response
-        .status(400)
-        .send({ status: false, msg: "Enter Valid College ID" });
-
-        if (!isValid(collegeId))
-        return res.status(404).send({ status: false, msg: "BlogID invalid" });
-
-
+let collegeName = req.body.collegeName
+if(!collegeName) return res.status(400).send({msg:"college name required"})
+let college = await collegeModel.findOne({name:collegeName})
+if(!college) return res.status(404).send({msg:"no such college is registered with us"})
+ 
+let collegeId=college._id
+req.body.collegeId=collegeId
    
-
-    
-    // if (!email)
-    //   return res.status(400).send({ status: false, msg: "email is required" });
-    // if (!mobile)
-    //   return res
-    //     .status(400)
-    //     .send({ status: false, msg: "mobile is required" });
 
     let internCreated = await internModel.create(data);
 
